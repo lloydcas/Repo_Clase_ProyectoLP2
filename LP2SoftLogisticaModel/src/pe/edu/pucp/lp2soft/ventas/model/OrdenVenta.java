@@ -5,6 +5,7 @@
  */
 package pe.edu.pucp.lp2soft.ventas.model;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import pe.edu.pucp.lp2soft.gestionclientes.model.Cliente;
@@ -83,5 +84,29 @@ public class OrdenVenta {
     public void setLineasOrdenVentas(ArrayList<LineaOrdenVenta> lineasOrdenVentas) {
         this.lineasOrdenVentas = lineasOrdenVentas;
     }
+    public void calcularTotalySubtotales(){
+        this.total = 0;
+        for(LineaOrdenVenta lov : lineasOrdenVentas){
+            total = total + lov.calcularSubtotal();
+        }
+    }
     
+    public String devolverReporte(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        String reporte = "";
+        reporte = reporte + "Orden Venta N°. " + idOrdenVenta + "\n";
+        reporte = reporte + "Fecha de Venta: " + sdf.format(fechaHora) + "\n";
+        reporte = reporte + "---------------------------------------------------------" + "\n";
+        reporte = reporte + "Cliente: " + cliente.getDNI() + " - " + cliente.getNombre() + 
+                " " + cliente.getApellidoPaterno() + "\n";
+        reporte = reporte + "Empleado: " + empleado.getDNI() + " - " + empleado.getNombre() +
+                " " + empleado.getApellidoPaterno() + "\n";
+        reporte = reporte + "---------------------------------------------------------" + "\n";
+        for(LineaOrdenVenta lov : lineasOrdenVentas){
+            reporte = reporte + lov.imprimirLinea() + "\n";
+        }
+        reporte = reporte + "---------------------------------------------------------" + "\n";
+        reporte = reporte + "TOTAL: S/. " + total;
+        return reporte;
+    }    
 }

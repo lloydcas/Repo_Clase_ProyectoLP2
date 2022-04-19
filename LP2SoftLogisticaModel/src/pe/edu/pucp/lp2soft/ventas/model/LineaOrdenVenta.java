@@ -18,7 +18,7 @@ public class LineaOrdenVenta {
     private boolean  activo;
     private Producto producto;
 
-    public LineaOrdenVenta(int cantidad, Producto producto) {
+    public LineaOrdenVenta(Producto producto,int cantidad) {
         this.cantidad = cantidad;
         this.producto = producto;
     }
@@ -62,6 +62,16 @@ public class LineaOrdenVenta {
     public void setProducto(Producto producto) {
         this.producto = producto;
     }
+     public double calcularSubtotal(){
+        subtotal = cantidad * producto.getPrecio();
+        return subtotal;
+    }
+    
+    public String imprimirLinea(){
+        return producto.getNombre() + " " + producto.getUnidadMedida() + " - "+
+                "S/. " + producto.getPrecio() + " x " + cantidad + " unid. - S/." + 
+                subtotal;
+    }   
     
     
 }
