@@ -20,6 +20,15 @@ public class Empleado extends Persona{
 
     public Empleado(int idPersona, String DNI, String nombre, 
            String apellidoPaterno, char genero, Date fechaNacimiento,
+           String cargo, double sueldo) {
+        super(idPersona, DNI, nombre, apellidoPaterno, genero, fechaNacimiento);
+        this.cargo = cargo;
+        this.sueldo = sueldo;
+    }    
+
+    
+    public Empleado(int idPersona, String DNI, String nombre, 
+           String apellidoPaterno, char genero, Date fechaNacimiento,
            String cargo, double sueldo, boolean activo, CuentaUsuario cuentaUsuario, Area area) {
         super(idPersona, DNI, nombre, apellidoPaterno, genero, fechaNacimiento);
         this.cargo = cargo;
