@@ -89,6 +89,14 @@ public class Principal {
            if(resultado == 1)
             System.out.println("Se ha insertado correctamente el empleado");
            else
-            System.out.println("Ha ocurrido un error al momento de insertar el empleado");         
+            System.out.println("Ha ocurrido un error al momento de insertar el empleado"); 
+           
+        ArrayList<Area> areas = daoArea.listarTodas();
+        //for(Area a : areas){
+        //}
+        for(int i=0;i<areas.size();i++){
+            System.out.println(areas.get(i).getIdArea() + ". " + 
+                    areas.get(i).getNombre());
+        }           
     }
 }
