@@ -8,6 +8,7 @@ package pe.edu.pucp.lp2soft.rrhh.mysql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -22,13 +23,41 @@ public class AreaMySQL implements AreaDAO{
     private Connection con;
     private Statement st;
     private ResultSet rs;
+    private PreparedStatement ps;
 
     @Override
     public ArrayList<Area> listarTodas() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //Devolvera una lista de areas
+        ArrayList<Area>areas = new ArrayList<>();
+        try
+        {   
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://database-lp2.coxaebd8y8cd.us-east-1.rds.amazonaws.com:3306/lp2",
+                    "admin", "lp220221");
+            st = con.createStatement();
+            String sql = "SELECT*FROM area WHERE activo = 1";
+            rs = st.executeQuery(sql);
+            while(rs.next())
+            {
+               
+                Area area = new Area();
+                area.setIdArea(rs.getInt("id_area"));
+                area.setNombre(rs.getString("nombre"));
+                area.setActivo(true);
+                areas.add(area);
+            }
+            
+            
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }finally
+        {
+            try{con.close();}catch(Exception ex){System.out.println(ex.getMessage());}
+        }
+          return areas;
     }
 
-    @Override
+    /*@Override
     public int insertar(Area area) {
         int resultado = 0;
         try{
@@ -56,8 +85,39 @@ public class AreaMySQL implements AreaDAO{
             try{con.close();}catch(Exception ex){System.out.println(ex.getMessage());}
         }
         return resultado;
-    }
+        
+    }*/
 
+    
+   public int insertar(Area area) {
+        int resultado = 0;
+        try{
+            //Registramos el Driver de conneccion
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://database-lp2.coxaebd8y8cd.us-east-1.rds.amazonaws.com:3306/lp2",
+                    "admin", "lp220221");
+                    
+            String sql = "INSERT INTO area(nombre, activo) VALUES (?,?)";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, area.getNombre());
+            ps.setBoolean(2, true);
+            resultado = ps.executeUpdate();
+            sql = "SELECT @@last_insert_id as id";
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            rs.next();
+            area.setIdArea(rs.getInt("id"));
+            
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }finally{
+            try{con.close();}catch(Exception ex){System.out.println(ex.getMessage());}
+        }
+        return resultado;
+    }
+    
+    
+    
     @Override
     public int modificar(Area area) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
