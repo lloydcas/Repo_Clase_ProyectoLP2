@@ -6,12 +6,14 @@
 package pe.edu.pucp.lp2soft.rrhh.mysql;
 
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import pe.edu.pucp.lp2soft.config.DBManager;
 import pe.edu.pucp.lp2soft.rrhh.dao.AreaDAO;
 import pe.edu.pucp.lp2soft.rrhh.model.Area;
 
@@ -24,6 +26,7 @@ public class AreaMySQL implements AreaDAO{
     private Statement st;
     private ResultSet rs;
     private PreparedStatement ps;
+    private CallableStatement cs;
 
     @Override
     public ArrayList<Area> listarTodas() {
@@ -31,15 +34,11 @@ public class AreaMySQL implements AreaDAO{
         ArrayList<Area>areas = new ArrayList<>();
         try
         {   
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://database-lp2.coxaebd8y8cd.us-east-1.rds.amazonaws.com:3306/lp2",
-                    "admin", "lp220221");
-            st = con.createStatement();
-            String sql = "SELECT*FROM area WHERE activo = 1";
-            rs = st.executeQuery(sql);
+            con = DBManager.getInstance().getConnection();
+            cs = con.prepareCall("{call LISTAR_AREAS_TODAS()}");
+            rs = cs.executeQuery();
             while(rs.next())
             {
-               
                 Area area = new Area();
                 area.setIdArea(rs.getInt("id_area"));
                 area.setNombre(rs.getString("nombre"));
@@ -89,6 +88,7 @@ public class AreaMySQL implements AreaDAO{
     }*/
 
     
+   /*@Override
    public int insertar(Area area) {
         int resultado = 0;
         try{
@@ -115,22 +115,87 @@ public class AreaMySQL implements AreaDAO{
         }
         return resultado;
     }
-    
+*/
+   @Override
+   public int insertar(Area area){
+       int resultado = 0;
+       try{
+           con = DBManager.getInstance().getConnection();
+           cs = con.prepareCall("{call INSERTAR_AREA(?,?)}");
+           cs.registerOutParameter("_id_area",java.sql.Types.INTEGER);//Si es una salida de dato OUT
+           cs.setString("_nombre",area.getNombre());//Si es un ingreso de dato IN
+           cs.executeUpdate();
+           area.setIdArea(cs.getInt("_id_area"));
+           resultado = 1;
+       }catch(Exception ex){
+           System.out.println(ex.getMessage());
+           
+       }finally{
+           try{con.close();}catch(Exception ex){System.out.println(ex.getMessage());}
+       }
+       return resultado;
+   }
     
     
     @Override
     public int modificar(Area area) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int resultado = 0;
+        try{
+            con = DBManager.getInstance().getConnection();
+            cs = con.prepareCall("{call MODIFICAR_AREA(?,?)}");
+            cs.setInt("_id_area", area.getIdArea());
+            cs.setString("_nombre",area.getNombre());
+            cs.executeUpdate();
+            resultado = 1;    
+        }catch(Exception ex){
+           System.out.println(ex.getMessage());            
+        }finally{
+            try{con.close();}catch(Exception ex){System.out.println(ex.getMessage());} 
+        }
+        return resultado;
     }
 
     @Override
     public int eliminar(int idArea) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int resultado = 0;
+        try{
+            con = DBManager.getInstance().getConnection();
+            cs = con.prepareCall("{call ELIMINAR_AREA(?)}");
+            cs.setInt("_id_area", idArea);
+            cs.executeUpdate();
+            resultado = 1;
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+            
+        }finally{
+            try{con.close();}catch(Exception ex){System.out.println(ex.getMessage());}
+        }
+       return resultado;     
     }
 
     @Override
     public Area listarPorId(int idArea) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Area area = null;
+        int resultado = 0;
+        try{
+            con = DBManager.getInstance().getConnection();
+            cs = con.prepareCall("{call BUSCAR_AREA_POR_ID(?)}");
+            cs.setInt("_id_area", idArea);
+            rs = cs.executeQuery();
+            if(rs.next()){
+                area = new Area();
+                area.setIdArea(idArea);
+                area.setNombre(rs.getString("nombre"));
+                area.setActivo(true);
+            }
+            resultado = 1;
+            
+        }catch(Exception ex){
+            
+        }finally{
+            
+        }
+        return area;
     }
     
 }
