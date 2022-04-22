@@ -93,7 +93,9 @@ public class Principal {
             System.out.println("Se ha insertado correctamente el empleado");
            else
             System.out.println("Ha ocurrido un error al momento de insertar el empleado"); 
+        
            
+        //Listando todas las areas registradas   
         ArrayList<Area> areas = daoArea.listarTodas();
         //for(Area a : areas){
         //}
@@ -103,6 +105,36 @@ public class Principal {
         }
         //Modificamos la segunda area
         areas.get(1).setNombre("LOGISTICA");
+        resultado = daoArea.modificar(areas.get(1));
+        if(resultado == 1)
+            System.out.println("Se ha modificado el area de id = " + areas.get(1).getIdArea());        
+        
+        //Listando nuevamente las areas luego de la actualizacion
+        areas = daoArea.listarTodas();
+        for(int i=0;i<areas.size();i++){
+            System.out.println(areas.get(i).getIdArea() + ". " + 
+                    areas.get(i).getNombre());
+        }
+        
+        //Obteniendo un area por id
+        Area area = daoArea.listarPorId(areas.get(1).getIdArea());
+        if(area!=null){
+            System.out.println("Se ha obtenido referencia al area de id = " + areas.get(1).getIdArea());
+            System.out.println(area.getIdArea()+". "+area.getNombre());
+        }
+        //Elimnado una area
+        if(area!=null){
+            resultado = daoArea.eliminar(area.getIdArea());
+        }
+        if(resultado == 1){
+            System.out.println("Se ha elimnado el area de id = "+area.getIdArea());
+        }
+        //Listando todas lasd areas
+        areas = daoArea.listarTodas();
+           for(int i=0;i<areas.size();i++){
+            System.out.println(areas.get(i).getIdArea() + ". " + 
+                    areas.get(i).getNombre());
+        }     
         
     }
 }
