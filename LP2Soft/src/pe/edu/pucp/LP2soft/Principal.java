@@ -72,6 +72,8 @@ public class Principal {
       
         //Creamos un area   
         Area area1 = new Area("VENTAS");
+        Area area2 = new Area("FINANZAS");
+        //Creamos un dao de conexion
         AreaDAO daoArea = new AreaMySQL();
         resultado = daoArea.insertar(area1);
            if(resultado == 1)
@@ -82,8 +84,9 @@ public class Principal {
        //Asosciamos el area y la cuenta del usuario al empleado que quremos registrar;
        empleado1.setArea(area1);
        empleado1.setCuentaUsuario(cu1);
-       
+       //Creamos un dao de conexion para empleados
         EmpleadoDAO daoEmpleado = new EmpleadoMySQL();
+        //Insertamos un empleado
         resultado = daoEmpleado.insertar(empleado1);
         
            if(resultado == 1)
@@ -97,6 +100,9 @@ public class Principal {
         for(int i=0;i<areas.size();i++){
             System.out.println(areas.get(i).getIdArea() + ". " + 
                     areas.get(i).getNombre());
-        }           
+        }
+        //Modificamos la segunda area
+        areas.get(1).setNombre("LOGISTICA");
+        
     }
 }
